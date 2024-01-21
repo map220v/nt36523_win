@@ -209,6 +209,27 @@ NVTLoadFirmwareFile(WDFDEVICE FxDevice, SPB_CONTEXT* SpbContext) {
     UNICODE_STRING  NVTFWFilePathKey;
     WDFSTRING NVTFWFilePath;
 
+    GUID efiGUID = { 0x9042a9de, 0x23dc, 0x4a38, { 0x96, 0xfb, 0x7a, 0xde, 0xd0, 0x80, 0x51, 0x6a } };
+    UNICODE_STRING efiVar;
+    unsigned int outVar[32];
+    ULONG outVarLen;
+
+    RtlInitUnicodeString(&efiVar, L"UEFIDisplayInfo");
+
+    outVarLen = sizeof(outVar);
+
+    ntstatus = ExGetFirmwareEnvironmentVariable(&efiVar, &efiGUID, &outVar, &outVarLen, NULL);
+    if (NT_SUCCESS(ntstatus)) {
+        if(outVar[10] == 0x25) {
+            RtlInitUnicodeString(&NVTFWFilePathKey, L"NVTFWImageHuaxingPath");
+        }
+        else {
+            RtlInitUnicodeString(&NVTFWFilePathKey, L"NVTFWImageTianmaPath");
+        }
+    }
+    else
+        RtlInitUnicodeString(&NVTFWFilePathKey, L"NVTFWImageHuaxingPath");
+
     PCHAR buffer = (PCHAR)ExAllocatePoolWithTag(
         NonPagedPool,
         FWBUFFER_SIZE,
@@ -229,8 +250,6 @@ NVTLoadFirmwareFile(WDFDEVICE FxDevice, SPB_CONTEXT* SpbContext) {
         &hKey);
 
     if (NT_SUCCESS(ntstatus)) {
-
-        RtlInitUnicodeString(&NVTFWFilePathKey, L"NVTFWImagePath");
 
         ntstatus = WdfRegistryQueryString(hKey, &NVTFWFilePathKey, NVTFWFilePath);
 

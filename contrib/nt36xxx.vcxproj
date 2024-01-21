@@ -466,7 +466,10 @@
     <ClInclude Include="..\include\nt36xxx\ntinternal.h" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="..\firmware\novatek_nt36523_fw.bin">
+    <CopyFileToFolders Include="..\firmware\novatek_nt36523_fw01.bin">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\firmware\novatek_nt36523_fw02.bin">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>
